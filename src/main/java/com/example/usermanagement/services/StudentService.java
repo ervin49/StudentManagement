@@ -15,4 +15,6 @@ public interface StudentService {
     public void updateStudentById(Integer id,Student student);
 
     public void deleteStudentById(Integer id);
+
+    public Integer greatestAbsente();
 }

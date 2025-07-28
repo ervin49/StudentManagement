@@ -6,10 +6,10 @@ import jakarta.persistence.*;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer id;
-    public String CNP;
-    public String name;
-    public Integer absente;
+    private Integer id;
+    private String CNP;
+    private String name;
+    private Integer absente;
 
     public Student(String CNP, String name, Integer absente) {
         this.CNP = CNP;

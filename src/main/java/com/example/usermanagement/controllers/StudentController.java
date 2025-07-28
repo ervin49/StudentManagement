@@ -39,7 +39,7 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -48,15 +48,16 @@ public class StudentController {
         return studentImpl.getStudentById(id);
     }
 
-    @GetMapping("/greatestAbsente")
-    public void getGreatestAbsente(){
+    @GetMapping("/greatest-absente")
+    public Integer getGreatestAbsente(){
+        return studentImpl.greatestAbsente();
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Student> updateStudentById(@PathVariable Integer id, @RequestBody Student student){
         try{
             studentImpl.updateStudentById(id, student);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.ok().body(student);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
