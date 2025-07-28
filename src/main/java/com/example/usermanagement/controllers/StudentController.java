@@ -28,24 +28,28 @@ public class StudentController {
 
     @PostMapping("/create")
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-        studentImpl.addStudent(student);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        try {
+            studentImpl.addStudent(student);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Student> removeStudent(@PathVariable Integer id) {
+
         try{
             studentImpl.deleteStudentById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        catch (Exception e){
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping("/students/{id}")
     public Optional<Student> getSpecificStudent(@PathVariable Integer id){
-        return studentImpl.getStudentById(id);
+            return studentImpl.getStudentById(id);
     }
 
     @GetMapping("/greatestAbsente")

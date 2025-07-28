@@ -5,14 +5,11 @@ import jakarta.persistence.*;
 @Entity
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer id;
-    public String CNP;
+    public String cnp;
     public String name;
     public Integer absente;
 
-    public Student(String CNP, String name, Integer absente) {
-        this.CNP = CNP;
+    public Student(String name, Integer absente) {
         this.name = name;
         this.absente = absente;
     }
@@ -20,15 +17,7 @@ public class Student {
     public Student(){}
 
     public String getCNP(){
-        return this.CNP;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setCNP(String CNP){
-        this.CNP = CNP;
+        return this.cnp;
     }
 
     public String getName(){
