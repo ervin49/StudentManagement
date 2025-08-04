@@ -27,12 +27,6 @@ public class StudentController {
         return studentImpl.getAllStudents();
     }
 
-    @PostMapping("/add-student")
-    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        studentImpl.addStudent(student);
-        return ResponseEntity.ok().body(student);
-    }
-
     @DeleteMapping("/delete-student/{student_id}")
     public ResponseEntity<Student> removeStudent(@PathVariable Integer student_id) {
         try {
@@ -46,6 +40,16 @@ public class StudentController {
     @GetMapping("/students/{student_id}")
     public Optional<Student> getSpecificStudent(@PathVariable Integer student_id) {
         return studentImpl.getStudentById(student_id);
+    }
+  
+    @PostMapping("/create")
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        try {
+            studentImpl.addStudent(student);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/most-absences")

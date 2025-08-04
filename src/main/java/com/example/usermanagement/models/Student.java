@@ -17,8 +17,8 @@ public class Student {
     private String name;
     private Integer absences;
 
-    public Student(String CNP, String name, Integer absences) {
-        this.CNP = CNP;
+    public Student(String name, Integer absente) {
+        this.cnp = cnp;
         this.name = name;
         this.absences = absences;
     }
@@ -26,12 +26,11 @@ public class Student {
     public Student() {
     }
 
-    public String getCNP() {
-        return this.CNP;
-    }
-
     public void setCNP(String CNP) {
         this.CNP = CNP;
+
+    public String getCNP(){
+        return this.cnp;
     }
 
     public String getName() {
