@@ -2,48 +2,51 @@ package com.example.usermanagement.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 @Entity
 public class Student {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    public Integer id;
+
     private String CNP;
     private String name;
-    private Integer absente;
+    private Integer absences;
 
-    public Student(String CNP, String name, Integer absente) {
+    public Student(String CNP, String name, Integer absences) {
         this.CNP = CNP;
         this.name = name;
-        this.absente = absente;
+        this.absences = absences;
     }
 
-    public Student(){}
+    public Student() {
+    }
 
-    public String getCNP(){
+    public String getCNP() {
         return this.CNP;
     }
 
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setCNP(String CNP){
+    public void setCNP(String CNP) {
         this.CNP = CNP;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Integer getAbsente(){
-        return this.absente;
+    public Integer getAbsences() {
+        return this.absences;
     }
 
-    public void setAbsente(Integer absente){
-        this.absente = absente;
+    public void setAbsente(Integer absences) {
+        this.absences = absences;
     }
 }

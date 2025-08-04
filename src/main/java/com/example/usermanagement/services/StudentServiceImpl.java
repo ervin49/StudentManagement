@@ -2,23 +2,19 @@ package com.example.usermanagement.services;
 
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.repositories.StudentRepository;
-
-import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import javax.naming.NameNotFoundException;
+import java.util.function.IntConsumer;
 
 @Service
-public class StudentServiceImpl implements StudentService{
-    @Autowired
+public class StudentServiceImpl implements StudentService {
     StudentRepository studentRepository;
 
-    public StudentServiceImpl(StudentRepository studentRepository){
+    @Autowired
+    public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
@@ -49,12 +45,16 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public Integer greatestAbsente(){
+    public Integer mostAbsences() {
         Integer maxAbsente = 0;
-        for (int id = 1; id < 1000; id++){
-            if(studentRepository.findById(id).get().getAbsente() > maxAbsente)
-                maxAbsente = studentRepository.findById(id).get().getAbsente();
+        for (int id = 1; id <= studentRepository.findAll().size(); id++) {
+            if (studentRepository.findById(id).isPresent()) {
+                Integer currAbsente = studentRepository.findById(id).get().getAbsences();
+                if (maxAbsente < currAbsente)
+                    maxAbsente = currAbsente;
+            }
         }
         return maxAbsente;
     }
+
 }
