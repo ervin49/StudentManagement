@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.IntConsumer;
 
 @Service
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
     StudentRepository studentRepository;
 
     @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository){
+    public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
@@ -42,4 +43,18 @@ public class StudentServiceImpl implements StudentService{
     public void deleteStudentById(Integer id) {
         studentRepository.deleteById(id);
     }
+
+    @Override
+    public Integer mostAbsences() {
+        Integer maxAbsente = 0;
+        for (int id = 1; id <= studentRepository.findAll().size(); id++) {
+            if (studentRepository.findById(id).isPresent()) {
+                Integer currAbsente = studentRepository.findById(id).get().getAbsences();
+                if (maxAbsente < currAbsente)
+                    maxAbsente = currAbsente;
+            }
+        }
+        return maxAbsente;
+    }
+
 }
