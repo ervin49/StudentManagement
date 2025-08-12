@@ -1,1 +1,10 @@
-Spring Boot project for managing a database of students using PostgreSQL
+# Student Database Management
+
+Spring Boot application for managing a student database.
+
+## Technologies Used
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL
+- Maven
+- Docker
