@@ -1,14 +1,11 @@
 package com.example.usermanagement.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Entity
 @Setter
@@ -21,14 +18,20 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Email
+    private String email;
+    @Column(unique = true)
     private String cnp;
     private String name;
     private Integer absences;
+    private Integer age;
 
     @Override
     public String toString() {
-        return "cnp is:" + cnp +
-                ", name is:" + name +
-                ", no. of absences is:" + absences;
+        return "cnp is: " + cnp +
+                ", name is: " + name +
+                ", email is: " + email +
+                ", no. of absences is: " + absences +
+                ", age is: " + age;
     }
 }

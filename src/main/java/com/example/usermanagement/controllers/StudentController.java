@@ -1,8 +1,6 @@
 package com.example.usermanagement.controllers;
 
-import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.models.Student;
-import com.example.usermanagement.services.StudentService;
 import com.example.usermanagement.services.StudentServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class StudentController {
@@ -53,20 +49,22 @@ public class StudentController {
             return "No such student.";
         return studentService.getStudentById(student_id).toString();
     }
-  
+
     @PostMapping("/create")
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
         try {
-            studentImpl.addStudent(student);
+            studentService.addStudent(student);
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/most-absences")
-    public Integer getMostAbsencesOfAllStudents() {
-        return studentService.mostAbsences();
+    public String getMostAbsencesOfAllStudents() {
+        StringBuilder name = new StringBuilder();
+        Integer absences = studentService.mostAbsences(name);
+        return "Student " + name + " has most absences: " + absences;
     }
 
     @PutMapping("/update/{student_id}")

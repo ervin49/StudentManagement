@@ -1,12 +1,10 @@
 package com.example.usermanagement.services;
 
-import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,13 +49,16 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Integer mostAbsences() {
+    public Integer mostAbsences(StringBuilder name) {
         Integer maxAbsences = 0;
         for (int id = 1; id <= studentRepository.findAll().size(); id++) {
             if (studentRepository.findById(id).isPresent()) {
                 Integer currAbsences = studentRepository.findById(id).get().getAbsences();
-                if (maxAbsences < currAbsences)
+                if (maxAbsences < currAbsences) {
                     maxAbsences = currAbsences;
+                    name.setLength(0);
+                    name.append(studentRepository.findById(id).get().getName());
+                }
             }
         }
         return maxAbsences;

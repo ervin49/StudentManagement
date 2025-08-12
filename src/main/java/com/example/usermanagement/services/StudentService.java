@@ -20,5 +20,5 @@ public interface StudentService {
 
     void deleteStudentById(Integer id);
 
-    Integer mostAbsences();
+    Integer mostAbsences(StringBuilder name);
 }
