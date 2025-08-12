@@ -4,10 +4,13 @@ package com.example.usermanagement.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.models.Student;
 
 public interface StudentService {
     void addStudent(Student student);
+
+    void saveAll(List<Student> students);
 
     List<Student> getAllStudents();
 

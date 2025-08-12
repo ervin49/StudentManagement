@@ -1,14 +1,28 @@
 package com.example.usermanagement.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Grade {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "genGrade")
+    @GeneratedValue(generator = "genGrade")
     @SequenceGenerator(name = "genGrade", initialValue = 200)
+    @JsonProperty
     private Integer id;
+
+    private Integer value;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -17,14 +31,4 @@ public class Grade {
     @ManyToOne
     @JoinColumn(name = "subject_id")
     Subject subject;
-
-    private Integer value;
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
 }

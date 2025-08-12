@@ -1,5 +1,6 @@
 package com.example.usermanagement.services;
 
+import com.example.usermanagement.DTOs.GradeDTO;
 import com.example.usermanagement.models.Grade;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface GradeService {
     void updateGrade(Integer grade_id, Grade grade);
 
     void deleteGrade(Integer grade_id);
+
+    List<GradeDTO> getGradesOfStudent(Integer student_id);
 }
