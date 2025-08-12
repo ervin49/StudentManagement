@@ -1,5 +1,6 @@
 package com.example.usermanagement.controllers;
 
+import com.example.usermanagement.DTOs.GradeDTO;
 import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.services.GradeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class GradeController {
         return gradeService.getSpecificGrade(grade_id);
     }
 
+
     @PostMapping("/add-grade")
     public ResponseEntity<Grade> addGrade(@RequestBody Grade grade) {
         gradeService.addGrade(grade);
@@ -49,5 +51,10 @@ public class GradeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/grades-of-student/{student_id}")
+    public ResponseEntity<List<GradeDTO>> getAllGrades(@PathVariable Integer student_id) {
+        return ResponseEntity.ok(gradeService.getGradesOfStudent(student_id));
     }
 }

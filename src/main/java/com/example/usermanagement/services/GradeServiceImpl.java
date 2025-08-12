@@ -1,5 +1,6 @@
 package com.example.usermanagement.services;
 
+import com.example.usermanagement.DTOs.GradeDTO;
 import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.repositories.GradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,10 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public void deleteGrade(Integer grade_id) {
         gradeRepository.deleteById(grade_id);
+    }
+
+    @Override
+    public List<GradeDTO> getGradesOfStudent(Integer student_id) {
+        return gradeRepository.findGradesByStudent_Id(student_id);
     }
 }
