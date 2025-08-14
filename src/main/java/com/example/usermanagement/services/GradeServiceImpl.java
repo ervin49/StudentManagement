@@ -63,7 +63,8 @@ public class GradeServiceImpl implements GradeService {
                 count += subjectRepository.findById(subject_id).get().getCredits();
             }
         }
-        return sum / count;
+        Double result = Double.parseDouble(String.format("%.2f", sum / count));
+        return result;
     }
 }
 
