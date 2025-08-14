@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface GradeRepository extends JpaRepository<Grade, Integer> {
 
-    List<GradeDTO> findGradesByStudent_Id(Integer studentId);
+    List<GradeDTO> findGradesByStudent_Id(Integer student_id);
 }

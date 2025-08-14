@@ -40,6 +40,16 @@ public class SubjectController {
         }
     }
 
+    @PostMapping("/add-subjects")
+    public ResponseEntity<List<Subject>> addMoreSubjects(@RequestBody List<Subject> subjects) {
+        try {
+            subjectService.saveAll(subjects);
+            return ResponseEntity.ok().body(subjects);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PutMapping("/update-subject/{subject_id}")
     public ResponseEntity<Subject> updateSubject(@PathVariable Integer subject_id, @RequestBody Subject subject) {
         try {

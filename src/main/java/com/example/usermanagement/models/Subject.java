@@ -22,5 +22,7 @@ public class Subject {
     @SequenceGenerator(name = "genSubject", initialValue = 100)
     private Integer id;
 
+    @Column(unique = true)
     private String name;
+    private Integer credits;
 }

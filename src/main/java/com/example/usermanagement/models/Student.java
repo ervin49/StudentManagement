@@ -2,14 +2,10 @@ package com.example.usermanagement.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Student {
@@ -25,13 +21,4 @@ public class Student {
     private String name;
     private Integer absences;
     private Integer age;
-
-    @Override
-    public String toString() {
-        return "cnp is: " + cnp +
-                ", name is: " + name +
-                ", email is: " + email +
-                ", no. of absences is: " + absences +
-                ", age is: " + age;
-    }
 }

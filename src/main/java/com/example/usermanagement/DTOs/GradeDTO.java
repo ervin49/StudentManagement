@@ -17,12 +17,11 @@ public class GradeDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Integer id;
+    private Integer value;
+    private String subject;
 
     public GradeDTO(Grade grade) {
         this.value = grade.getValue();
         this.subject = grade.getSubject().getName();
     }
-
-    private Integer value;
-    private String subject;
 }

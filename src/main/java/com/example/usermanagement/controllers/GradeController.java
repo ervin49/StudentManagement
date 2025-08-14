@@ -57,4 +57,9 @@ public class GradeController {
     public ResponseEntity<List<GradeDTO>> getAllGrades(@PathVariable Integer student_id) {
         return ResponseEntity.ok(gradeService.getGradesOfStudent(student_id));
     }
+
+    @GetMapping("/average-of-student/{student_id}")
+    public ResponseEntity<String> getAverageOfStudent(@PathVariable Integer student_id) {
+        return ResponseEntity.ok("Student's average is: " + gradeService.getAverage(student_id));
+    }
 }

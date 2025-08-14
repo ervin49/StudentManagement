@@ -8,6 +8,8 @@ import com.example.usermanagement.models.Subject;
 public interface SubjectService {
     public void addSubject(Subject subject);
 
+    public void saveAll(List<Subject> subjects);
+
     public List<Subject> getAllSubjects();
 
     public Optional<Subject> getSpecificSubject(Integer subject_id);
