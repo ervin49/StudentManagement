@@ -57,10 +57,12 @@ public class GradeServiceImpl implements GradeService {
         Double sum = 0.0, count = 0.0;
         List<GradeDTO> grades = gradeRepository.findGradesByStudent_Id(student_id);
         for (GradeDTO grade : grades) {
-            Integer subject_id = subjectRepository.getSubjectByName(grade.getSubject()).getId();
+            String subjectName = grade.getSubject();
+            Integer subject_id = subjectRepository.getSubjectByName(subjectName).getId();
             if (subjectRepository.findById(subject_id).isPresent()) {
-                sum += grade.getValue() * subjectRepository.findById(subject_id).get().getCredits();
-                count += subjectRepository.findById(subject_id).get().getCredits();
+                Integer currCredits = subjectRepository.findById(subject_id).get().getCredits();
+                sum += grade.getValue() * currCredits;
+                count += currCredits;
             }
         }
         Double result = Double.parseDouble(String.format("%.2f", sum / count));
