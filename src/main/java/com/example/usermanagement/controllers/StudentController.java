@@ -1,8 +1,9 @@
 package com.example.usermanagement.controllers;
 
 import com.example.usermanagement.models.Student;
-import com.example.usermanagement.services.StudentServiceImpl;
+import com.example.usermanagement.services.StudentService;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class StudentController {
 
-    StudentServiceImpl studentService;
-
-    @Autowired
-    public StudentController(StudentServiceImpl studentService) {
-        this.studentService = studentService;
-    }
+    StudentService studentService;
 
     @GetMapping("/students")
     public ResponseEntity<List<Student>> getAllStudents() {

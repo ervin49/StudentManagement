@@ -1,20 +1,41 @@
 package com.example.usermanagement.services;
 
+import com.example.usermanagement.models.Subject;
+import com.example.usermanagement.repositories.SubjectRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.example.usermanagement.models.Subject;
+@Service
+@AllArgsConstructor
+public class SubjectService {
 
-public interface SubjectService {
-    public void addSubject(Subject subject);
+    SubjectRepository subjectRepository;
 
-    public void saveAll(List<Subject> subjects);
+    public void addSubject(Subject subject) {
+        subjectRepository.save(subject);
+    }
 
-    public List<Subject> getAllSubjects();
+    public void saveAll(List<Subject> subjects) {
+        subjectRepository.saveAll(subjects);
+    }
 
-    public Optional<Subject> getSpecificSubject(Integer subject_id);
+    public List<Subject> getAllSubjects() {
+        return subjectRepository.findAll();
+    }
 
-    public void updateSubject(Integer subject_id, Subject subject);
+    public Optional<Subject> getSpecificSubject(Integer subject_id) {
+        return subjectRepository.findById(subject_id);
+    }
 
-    public void deleteSubject(Integer subject_id);
+    public void updateSubject(Integer subject_id, Subject subject) {
+        subjectRepository.deleteById(subject_id);
+        subjectRepository.save(subject);
+    }
+
+    public void deleteSubject(Integer subject_id) {
+        subjectRepository.deleteById(subject_id);
+    }
 }

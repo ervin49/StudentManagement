@@ -2,7 +2,8 @@ package com.example.usermanagement.controllers;
 
 import com.example.usermanagement.DTOs.GradeDTO;
 import com.example.usermanagement.models.Grade;
-import com.example.usermanagement.services.GradeServiceImpl;
+import com.example.usermanagement.services.GradeService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 public class GradeController {
-    GradeServiceImpl gradeService;
-
-    @Autowired
-    public GradeController(GradeServiceImpl gradeService) {
-        this.gradeService = gradeService;
-    }
+    GradeService gradeService;
 
     @GetMapping("/grades")
     public List<Grade> getAllGrades() {

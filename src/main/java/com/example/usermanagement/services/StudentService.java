@@ -1,24 +1,56 @@
 package com.example.usermanagement.services;
 
+import com.example.usermanagement.models.Student;
+import com.example.usermanagement.repositories.StudentRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.example.usermanagement.models.Grade;
-import com.example.usermanagement.models.Student;
+@Service
+@AllArgsConstructor
+public class StudentService {
+    StudentRepository studentRepository;
 
-public interface StudentService {
-    void addStudent(Student student);
+    public void addStudent(Student student) {
+        studentRepository.save(student);
+    }
 
-    void saveAll(List<Student> students);
+    public void saveAll(List<Student> students) {
+        studentRepository.saveAll(students);
+    }
 
-    List<Student> getAllStudents();
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
 
-    Optional<Student> getStudentById(Integer id);
+    public Optional<Student> getStudentById(Integer id) {
+        return studentRepository.findById(id);
+    }
 
-    void updateStudentById(Integer id, Student student);
+    public void updateStudentById(Integer id, Student student) {
+        studentRepository.deleteById(id);
+        studentRepository.save(student);
+    }
 
-    void deleteStudentById(Integer id);
+    public void deleteStudentById(Integer id) {
+        studentRepository.deleteById(id);
+    }
 
-    Integer mostAbsences(StringBuilder name);
+    public Integer mostAbsences(StringBuilder name) {
+        Integer maxAbsences = 0;
+        for (int id = 1; id <= studentRepository.findAll().size(); id++) {
+            if (studentRepository.findById(id).isPresent()) {
+                Integer currAbsences = studentRepository.findById(id).get().getAbsences();
+                if (maxAbsences < currAbsences) {
+                    maxAbsences = currAbsences;
+                    name.setLength(0);
+                    name.append(studentRepository.findById(id).get().getName());
+                }
+            }
+        }
+        return maxAbsences;
+    }
+
 }
