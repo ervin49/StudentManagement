@@ -4,6 +4,7 @@ import com.example.usermanagement.models.Student;
 import com.example.usermanagement.services.StudentService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,30 +18,21 @@ public class StudentController {
 
     StudentService studentService;
 
+    @PostMapping("/register")
+    public ResponseEntity<Student> register(@RequestBody Student student) {
+        try {
+            studentService.register(student);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/students")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Student>> getAllStudents() {
         List<Student> students = studentService.getAllStudents();
         return new ResponseEntity<>(students, HttpStatus.OK);
-    }
-
-    @PostMapping("/add-students")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> addStudent(@RequestBody List<Student> students) {
-        studentService.saveAll(students);
-        return ResponseEntity.ok("Students created successfully");
-    }
-
-
-    @DeleteMapping("/delete-student/{student_id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Student> removeStudent(@PathVariable Integer student_id) {
-        try {
-            studentService.deleteStudentById(student_id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 
     @GetMapping("/students/{student_id}")
@@ -50,15 +42,9 @@ public class StudentController {
         return studentService.getStudentById(student_id).toString();
     }
 
-    @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-        try {
-            studentService.addStudent(student);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    @GetMapping("/")
+    public String welcome() {
+        return "Welcome!";
     }
 
     @GetMapping("/most-absences")
@@ -77,6 +63,18 @@ public class StudentController {
             return ResponseEntity.ok().body(student);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @DeleteMapping("/delete-student/{student_id}")
+    @PreAuthorize("hasRole('ADMIN')")
+
+    public ResponseEntity<Student> removeStudent(@PathVariable Integer student_id) {
+        try {
+            studentService.deleteStudentById(student_id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

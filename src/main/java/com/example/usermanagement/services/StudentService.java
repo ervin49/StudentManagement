@@ -2,18 +2,26 @@ package com.example.usermanagement.services;
 
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.repositories.StudentRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class StudentService {
     StudentRepository studentRepository;
 
-    public void addStudent(Student student) {
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+
+    public void register(Student student) {
+        student.setPassword(encoder.encode(student.getPassword()));
         studentRepository.save(student);
     }
 
