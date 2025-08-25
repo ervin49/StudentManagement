@@ -1,6 +1,6 @@
 package com.example.usermanagement.services;
 
-import com.example.usermanagement.DTOs.GradeDTO;
+import com.example.usermanagement.DTOs.response.GradeDTO;
 import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.repositories.GradeRepository;
 import com.example.usermanagement.repositories.SubjectRepository;

@@ -27,7 +27,7 @@ public class SubjectController {
         return subjectService.getSpecificSubject(subject_id);
     }
 
-    @PostMapping("/add-subject")
+    @PostMapping("/subjects/add")
     public ResponseEntity<Subject> addSubject(@RequestBody Subject subject) {
         try {
             subjectService.addSubject(subject);
@@ -37,17 +37,7 @@ public class SubjectController {
         }
     }
 
-    @PostMapping("/add-subjects")
-    public ResponseEntity<List<Subject>> addMoreSubjects(@RequestBody List<Subject> subjects) {
-        try {
-            subjectService.saveAll(subjects);
-            return ResponseEntity.ok().body(subjects);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PutMapping("/update-subject/{subject_id}")
+    @PutMapping("/subjects/update-subject/{subject_id}")
     public ResponseEntity<Subject> updateSubject(@PathVariable Integer subject_id, @RequestBody Subject subject) {
         try {
             subjectService.updateSubject(subject_id, subject);
@@ -57,7 +47,7 @@ public class SubjectController {
         }
     }
 
-    @DeleteMapping("/delete-subject/{subject_id}")
+    @DeleteMapping("/subjects/delete-subject/{subject_id}")
     public ResponseEntity<Subject> deleteSubject(@PathVariable Integer subject_id) {
         try {
             subjectService.deleteSubject(subject_id);
