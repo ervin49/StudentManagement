@@ -1,41 +1,56 @@
 package com.example.usermanagement.configs;
 
 import com.example.usermanagement.services.impl.UserDetailsServiceImpl;
-import org.modelmapper.ModelMapper;
+import jakarta.servlet.Filter;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+    OncePerRequestFilter filter;
+
+    @Autowired
+    public SecurityConfig(OncePerRequestFilter filter){
+        this.filter = filter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers("/", "/register", "/login")
                                 .permitAll()
                                 .requestMatchers("/students/**", "/subjects/**", "/grades/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login").permitAll())
+                .formLogin(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
                         .permitAll())
+                .sessionManagement(config -> config
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .build();
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
     @Bean
@@ -44,15 +59,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public ModelMapper mapper() {
-        return new ModelMapper();
+    public AuthenticationManager authenticationManager(
+            UserDetailsServiceImpl userDetailsServiceImpl,
+            PasswordEncoder encoder) {
+
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsServiceImpl);
+        provider.setPasswordEncoder(encoder);
+
+        return new ProviderManager(provider);
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(UserDetailsServiceImpl userDetailsServiceImpl) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(encoder());
-        provider.setUserDetailsService(userDetailsServiceImpl);
-        return new ProviderManager(provider);
+    public OncePerRequestFilter filter(){
+        return new JwtAuthenticationFilter();
     }
 }

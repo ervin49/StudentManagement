@@ -28,12 +28,12 @@ public class StudentService {
     public String register(Student student) {
         Student studentExists = studentRepository.findStudentByEmail(student.getEmail());
         if (studentExists != null)
-            return "Student with email: " + student.getEmail() + " already exists!";
+            return "Student with email " + student.getEmail() + " already exists!";
 
         student.setPassword(encoder.encode(student.getPassword()));
         studentRepository.save(student);
 
-        return "Registration successful";
+        return "Registration successful.";
     }
 
     public LoginResponseDTO login(StudentRequestDTO studentRequestDTO) {
@@ -44,7 +44,7 @@ public class StudentService {
         Student student = studentRepository.findStudentByEmail(studentRequestDTO.getEmail());
         UserDetails userDetails = new UserDetailsImpl(student);
 
-        String jwtToken = jwtService.generateToken(new HashMap<>(), userDetails);
+        String jwtToken = jwtService.generateToken(userDetails);
 
         return new LoginResponseDTO(student.getEmail(), jwtToken);
     }

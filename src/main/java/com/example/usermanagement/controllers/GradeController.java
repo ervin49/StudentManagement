@@ -29,15 +29,15 @@ public class GradeController {
 
 
     @PostMapping("/grades/add")
-    public ResponseEntity<Grade> addGrade(@RequestBody Grade grade) {
+    public ResponseEntity<String> addGrade(@RequestBody Grade grade) {
         gradeService.addGrade(grade);
-        return ResponseEntity.ok().body(grade);
+        return ResponseEntity.ok().body("Grade added");
     }
 
     @PutMapping("/grades/update-grade/{grade_id}")
-    public ResponseEntity<Grade> updateGrade(@PathVariable Integer grade_id, @RequestBody Grade grade) {
+    public ResponseEntity<String> updateGrade(@PathVariable Integer grade_id, @RequestBody Grade grade) {
         gradeService.updateGrade(grade_id, grade);
-        return ResponseEntity.ok().body(grade);
+        return ResponseEntity.ok().body("Grade updated");
     }
 
     @DeleteMapping("/grades/delete-grade/{grade_id}")

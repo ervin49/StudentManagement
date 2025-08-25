@@ -27,10 +27,13 @@ public class Student {
     @Email
     @Column(unique = true, length = 50, nullable = false)
     private String email;
-    @Column(unique = true)
+    @Column(unique = true,nullable = false)
     private String cnp;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private Integer absences;
+    @Column(nullable = false)
     private Integer age;
     @Column(nullable = false)
     private String password;

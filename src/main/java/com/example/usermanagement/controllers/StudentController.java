@@ -4,7 +4,6 @@ import com.example.usermanagement.DTOs.request.StudentRequestDTO;
 import com.example.usermanagement.DTOs.response.LoginResponseDTO;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.services.StudentService;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -26,9 +26,9 @@ public class StudentController {
     public ResponseEntity<String> register(@RequestBody Student student) {
         try {
             String str = studentService.register(student);
-            if (str.equals("Registration Successful"))
-                return new ResponseEntity<>(str, HttpStatus.CREATED);
-            return new ResponseEntity<>(str, HttpStatus.BAD_REQUEST);
+            if (str.equals("Registration successful."))
+                return ResponseEntity.status(HttpStatus.CREATED).body("Registration successful.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Student already exists");
         } catch (Exception e) {
             log.error("e: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -68,10 +68,10 @@ public class StudentController {
 
     @PutMapping("/students/update/{student_id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Student> updateStudentById(@PathVariable Integer student_id, @RequestBody Student student) {
+    public ResponseEntity<String> updateStudentById(@PathVariable Integer student_id, @RequestBody Student student) {
         try {
             studentService.updateStudentById(student_id, student);
-            return ResponseEntity.ok().body(student);
+            return ResponseEntity.status(HttpStatus.OK).body("Update successful");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
