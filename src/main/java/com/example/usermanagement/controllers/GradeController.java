@@ -1,12 +1,12 @@
 package com.example.usermanagement.controllers;
 
-import com.example.usermanagement.DTOs.GradeDTO;
+import com.example.usermanagement.DTOs.response.GradeDTO;
 import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.services.GradeService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,19 +28,19 @@ public class GradeController {
     }
 
 
-    @PostMapping("/add-grade")
+    @PostMapping("/grades/add")
     public ResponseEntity<Grade> addGrade(@RequestBody Grade grade) {
         gradeService.addGrade(grade);
         return ResponseEntity.ok().body(grade);
     }
 
-    @PutMapping("/update-grade/{grade_id}")
+    @PutMapping("/grades/update-grade/{grade_id}")
     public ResponseEntity<Grade> updateGrade(@PathVariable Integer grade_id, @RequestBody Grade grade) {
         gradeService.updateGrade(grade_id, grade);
         return ResponseEntity.ok().body(grade);
     }
 
-    @DeleteMapping("/delete-grade/{grade_id}")
+    @DeleteMapping("/grades/delete-grade/{grade_id}")
     public ResponseEntity<Grade> deleteGrade(@PathVariable Integer grade_id) {
         try {
             gradeService.deleteGrade(grade_id);
@@ -50,8 +50,8 @@ public class GradeController {
         }
     }
 
-    @GetMapping("/grades-of-student/{student_id}")
-    public ResponseEntity<List<GradeDTO>> getAllGrades(@PathVariable Integer student_id) {
+    @GetMapping("/my-grades")
+    public ResponseEntity<List<GradeDTO>> getAllGrades(@AuthenticationPrincipal Integer student_id) {
         return ResponseEntity.ok(gradeService.getGradesOfStudent(student_id));
     }
 

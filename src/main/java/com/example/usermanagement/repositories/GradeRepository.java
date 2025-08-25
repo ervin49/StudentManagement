@@ -1,6 +1,6 @@
 package com.example.usermanagement.repositories;
 
-import com.example.usermanagement.DTOs.GradeDTO;
+import com.example.usermanagement.DTOs.response.GradeDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.usermanagement.models.Grade;
 import org.springframework.stereotype.Repository;

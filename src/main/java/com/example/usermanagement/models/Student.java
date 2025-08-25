@@ -2,7 +2,10 @@ package com.example.usermanagement.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,8 +16,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "students")
-public class Student implements UserDetails {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,20 +29,9 @@ public class Student implements UserDetails {
     private String email;
     @Column(unique = true)
     private String cnp;
-    @Column(nullable = false)
     private String name;
     private Integer absences;
     private Integer age;
     @Column(nullable = false)
     private String password;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
 }

@@ -1,4 +1,4 @@
-package com.example.usermanagement.DTOs;
+package com.example.usermanagement.DTOs.response;
 
 import com.example.usermanagement.models.Grade;
 import com.fasterxml.jackson.annotation.JsonIgnore;
