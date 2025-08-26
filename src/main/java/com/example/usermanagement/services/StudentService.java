@@ -7,14 +7,13 @@ import com.example.usermanagement.repositories.StudentRepository;
 import com.example.usermanagement.services.impl.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,11 +41,18 @@ public class StudentService {
         ));
 
         Student student = studentRepository.findStudentByEmail(studentRequestDTO.getEmail());
-        UserDetails userDetails = new UserDetailsImpl(student);
+        if (student == null)
+            return LoginResponseDTO.builder()
+                    .username("User does not exist!")
+                    .token("").build();
+        UserDetails userDetails = UserDetailsImpl.builder().student(student).build();
 
         String jwtToken = jwtService.generateToken(userDetails);
 
-        return new LoginResponseDTO(student.getEmail(), jwtToken);
+        return LoginResponseDTO.builder()
+                .username(studentRequestDTO.getEmail())
+                .token(jwtToken)
+                .build();
     }
 
     public List<Student> getAllStudents() {

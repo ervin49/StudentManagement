@@ -21,15 +21,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter filter) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter filter) throws Exception {
+        return http
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/", "/register", "/login")
+                                .requestMatchers("/", "/register", "/login", "/default-ui.css")
                                 .permitAll()
                                 .requestMatchers("/students/**", "/subjects/**", "/grades/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
+                .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
@@ -38,8 +38,8 @@ public class SecurityConfig {
                 .sessionManagement(config -> config
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
