@@ -9,7 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,8 +49,13 @@ public class StudentController {
     }
 
     @GetMapping("/my-details")
-    public Student getMyDetails(@AuthenticationPrincipal Student student) {
-        return student;
+    public Student getMyDetails(){
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.isAuthenticated()){
+            String email = authentication.getName();
+            return studentService.getStudentByEmail(email);
+        }
+        return null;
     }
 
     @GetMapping("/")

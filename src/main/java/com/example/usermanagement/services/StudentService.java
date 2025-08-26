@@ -7,14 +7,12 @@ import com.example.usermanagement.repositories.StudentRepository;
 import com.example.usermanagement.services.impl.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -59,10 +57,6 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public Optional<Student> getStudentById(Integer id) {
-        return studentRepository.findById(id);
-    }
-
     public void updateStudentById(Integer id, Student student) {
         studentRepository.deleteById(id);
         studentRepository.save(student);
@@ -70,6 +64,10 @@ public class StudentService {
 
     public void deleteStudentById(Integer id) {
         studentRepository.deleteById(id);
+    }
+
+    public Student getStudentByEmail(String email) {
+        return studentRepository.findStudentByEmail(email);
     }
 
 //    public Integer mostAbsences(StringBuilder name) {
