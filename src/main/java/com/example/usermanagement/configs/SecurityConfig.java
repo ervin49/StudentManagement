@@ -1,10 +1,6 @@
 package com.example.usermanagement.configs;
 
 import com.example.usermanagement.services.impl.UserDetailsServiceImpl;
-import jakarta.servlet.Filter;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,20 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-    OncePerRequestFilter filter;
-
-    @Autowired
-    public SecurityConfig(OncePerRequestFilter filter){
-        this.filter = filter;
-    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter filter) throws Exception {
         http
                 .authorizeHttpRequests(request ->
                         request
@@ -67,10 +56,5 @@ public class SecurityConfig {
         provider.setPasswordEncoder(encoder);
 
         return new ProviderManager(provider);
-    }
-
-    @Bean
-    public OncePerRequestFilter filter(){
-        return new JwtAuthenticationFilter();
     }
 }

@@ -3,7 +3,6 @@ package com.example.usermanagement.controllers;
 import com.example.usermanagement.models.Subject;
 import com.example.usermanagement.services.SubjectService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
