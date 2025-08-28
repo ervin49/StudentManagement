@@ -26,7 +26,7 @@ public class SecurityConfig {
                         request
                                 .requestMatchers("/", "/register", "/login")
                                 .permitAll()
-                                .requestMatchers("/students/**", "/subjects/**", "/grades/**").hasRole("ADMIN")
+                                .requestMatchers("/students/**", "/subjects/**", "/grades/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
@@ -56,4 +56,5 @@ public class SecurityConfig {
 
         return new ProviderManager(provider);
     }
+
 }

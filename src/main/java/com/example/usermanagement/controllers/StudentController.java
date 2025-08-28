@@ -1,14 +1,12 @@
 package com.example.usermanagement.controllers;
 
 import com.example.usermanagement.DTOs.request.StudentRequestDTO;
-import com.example.usermanagement.DTOs.response.LoginResponseDTO;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.services.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -36,13 +34,14 @@ public class StudentController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody StudentRequestDTO studentRequestDTO) {
-        LoginResponseDTO response = studentService.login(studentRequestDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<String> login(@RequestBody StudentRequestDTO studentRequestDTO) {
+        String str = studentService.login(studentRequestDTO);
+        if(str.equals("Email or password wrong!"))
+            return new ResponseEntity<>(str,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(str, HttpStatus.OK);
     }
 
     @GetMapping("/students")
-    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Student>> getAllStudents() {
         List<Student> students = studentService.getAllStudents();
         return new ResponseEntity<>(students, HttpStatus.OK);
@@ -63,16 +62,14 @@ public class StudentController {
         return "Welcome!";
     }
 
-//    @GetMapping("/most-absences")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public String getMostAbsencesOfAllStudents() {
-//        StringBuilder name = new StringBuilder();
-//        Integer absences = studentService.mostAbsences(name);
-//        return "Student " + name + " has most absences: " + absences;
-//    }
+    @GetMapping("/students/most-absences")
+    public String getMostAbsencesOfAllStudents() {
+        StringBuilder name = new StringBuilder();
+        Integer absences = studentService.mostAbsences(name);
+        return "Student " + name + " has most absences: " + absences;
+    }
 
     @PutMapping("/students/update/{student_id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> updateStudentById(@PathVariable Integer student_id, @RequestBody Student student) {
         try {
             studentService.updateStudentById(student_id, student);
@@ -83,8 +80,6 @@ public class StudentController {
     }
 
     @DeleteMapping("/students/delete-student/{student_id}")
-    @PreAuthorize("hasRole('ADMIN')")
-
     public ResponseEntity<Student> removeStudent(@PathVariable Integer student_id) {
         try {
             studentService.deleteStudentById(student_id);
@@ -92,5 +87,10 @@ public class StudentController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PutMapping("/students/")
+    public ResponseEntity<String> grantRole(){
+        return new ResponseEntity<>("Success",HttpStatus.OK);
     }
 }

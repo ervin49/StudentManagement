@@ -1,14 +1,13 @@
 package com.example.usermanagement.services;
 
 import com.example.usermanagement.DTOs.request.StudentRequestDTO;
-import com.example.usermanagement.DTOs.response.LoginResponseDTO;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.repositories.StudentRepository;
 import com.example.usermanagement.services.impl.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,24 +32,19 @@ public class StudentService {
         return "Registration successful.";
     }
 
-    public LoginResponseDTO login(StudentRequestDTO studentRequestDTO) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                studentRequestDTO.getEmail(), studentRequestDTO.getPassword()
-        ));
+    public String login(StudentRequestDTO studentRequestDTO) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    studentRequestDTO.getEmail(), studentRequestDTO.getPassword()
+            ));
 
-        Student student = studentRepository.findStudentByEmail(studentRequestDTO.getEmail());
-        if (student == null)
-            return LoginResponseDTO.builder()
-                    .username("User does not exist!")
-                    .token("").build();
-        UserDetails userDetails = UserDetailsImpl.builder().student(student).build();
+            Student student = studentRepository.findStudentByEmail(studentRequestDTO.getEmail());
+            UserDetailsImpl userDetails = UserDetailsImpl.builder().student(student).build();
 
-        String jwtToken = jwtService.generateToken(userDetails);
-
-        return LoginResponseDTO.builder()
-                .username(studentRequestDTO.getEmail())
-                .token(jwtToken)
-                .build();
+            return jwtService.generateToken(userDetails);
+        }catch (BadCredentialsException e) {
+            return "Email or password wrong!";
+        }
     }
 
     public List<Student> getAllStudents() {
@@ -70,19 +64,19 @@ public class StudentService {
         return studentRepository.findStudentByEmail(email);
     }
 
-//    public Integer mostAbsences(StringBuilder name) {
-//        Integer maxAbsences = 0;
-//        for (int id = 1; id <= studentRepository.findAll().size(); id++) {
-//            if (studentRepository.findById(id).isPresent()) {
-//                Integer currAbsences = studentRepository.findById(id).get().getAbsences();
-//                if (maxAbsences < currAbsences) {
-//                    maxAbsences = currAbsences;
-//                    name.setLength(0);
-//                    name.append(studentRepository.findById(id).get().getName());
-//                }
-//            }
-//        }
-//        return maxAbsences;
-//    }
+    public Integer mostAbsences(StringBuilder name) {
+        Integer maxAbsences = 0;
+        for (Integer id = 1; id <= studentRepository.findAll().size(); id++) {
+            if (studentRepository.findById(id).isPresent()) {
+                Integer currAbsences = studentRepository.findById(id).get().getAbsences();
+                if (maxAbsences < currAbsences) {
+                    maxAbsences = currAbsences;
+                    name.setLength(0);
+                    name.append(studentRepository.findById(id).get().getName());
+                }
+            }
+        }
+        return maxAbsences;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.example.usermanagement.services;
 
+import com.example.usermanagement.services.impl.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -19,11 +19,12 @@ public class JwtService {
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetailsImpl userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("role",userDetails.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
