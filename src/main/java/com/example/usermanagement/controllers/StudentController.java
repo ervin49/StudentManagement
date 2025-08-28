@@ -66,7 +66,9 @@ public class StudentController {
     public String getMostAbsencesOfAllStudents() {
         StringBuilder name = new StringBuilder();
         Integer absences = studentService.mostAbsences(name);
-        return "Student " + name + " has most absences: " + absences;
+        if(absences != null)
+            return "Student " + name + " has most absences: " + absences;
+        return "There is no student in the database!";
     }
 
     @PutMapping("/students/update/{student_id}")
@@ -87,10 +89,5 @@ public class StudentController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    @PutMapping("/students/")
-    public ResponseEntity<String> grantRole(){
-        return new ResponseEntity<>("Success",HttpStatus.OK);
     }
 }

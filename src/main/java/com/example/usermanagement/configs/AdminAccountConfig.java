@@ -17,7 +17,7 @@ public class AdminAccountConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Student admin = Student.builder()
-                .email("admin@admin.com")
+                .email("admin@example.com")
                 .password(encoder.encode("admin"))
                 .role(Role.ADMIN)
                 .build();

@@ -2,11 +2,14 @@ package com.example.usermanagement.controllers;
 
 import com.example.usermanagement.DTOs.response.GradeDTO;
 import com.example.usermanagement.models.Grade;
+import com.example.usermanagement.models.Student;
 import com.example.usermanagement.services.GradeService;
+import com.example.usermanagement.services.StudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +18,18 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 public class GradeController {
-    GradeService gradeService;
+    private final GradeService gradeService;
+    private final StudentService studentService;
 
-    @GetMapping("/grades")
-    public List<Grade> getAllGrades() {
-        return gradeService.getAllGrades();
+    @GetMapping("/my-grades")
+    public List<GradeDTO> getAllGrades() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.isAuthenticated()){
+            String email = authentication.getName();
+            Student student = studentService.getStudentByEmail(email);
+            return gradeService.getGradesOfStudent(student.getId());
+        }
+        return List.of();
     }
 
     @GetMapping("/grades/{grade_id}")
@@ -48,11 +58,6 @@ public class GradeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    @GetMapping("/my-grades")
-    public ResponseEntity<List<GradeDTO>> getAllGrades(@AuthenticationPrincipal Integer student_id) {
-        return ResponseEntity.ok(gradeService.getGradesOfStudent(student_id));
     }
 
     @GetMapping("/average-of-student/{student_id}")

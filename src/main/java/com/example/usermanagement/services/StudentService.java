@@ -65,18 +65,21 @@ public class StudentService {
     }
 
     public Integer mostAbsences(StringBuilder name) {
-        Integer maxAbsences = 0;
-        for (Integer id = 1; id <= studentRepository.findAll().size(); id++) {
-            if (studentRepository.findById(id).isPresent()) {
-                Integer currAbsences = studentRepository.findById(id).get().getAbsences();
-                if (maxAbsences < currAbsences) {
-                    maxAbsences = currAbsences;
-                    name.setLength(0);
-                    name.append(studentRepository.findById(id).get().getName());
+        int maxAbsences = 0;
+        if(studentRepository.findAll().size() >= 2) {
+            for (Integer id = 2; id <= studentRepository.findAll().size(); id++) {
+                if (studentRepository.findById(id).isPresent()) {
+                    Integer currAbsences = studentRepository.findById(id).get().getAbsences();
+                    if (maxAbsences < currAbsences) {
+                        maxAbsences = currAbsences;
+                        name.setLength(0);
+                        name.append(studentRepository.findById(id).get().getName());
+                    }
                 }
             }
+            return maxAbsences;
         }
-        return maxAbsences;
+        return null;
     }
 
 }
