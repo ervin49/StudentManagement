@@ -24,7 +24,7 @@ public class StudentService {
     public String register(Student student) {
         Student studentExists = studentRepository.findStudentByEmail(student.getEmail());
         if (studentExists != null)
-            return "Student with email " + student.getEmail() + " already exists!";
+            return "Email already taken!";
 
         student.setPassword(encoder.encode(student.getPassword()));
         studentRepository.save(student);
@@ -81,5 +81,4 @@ public class StudentService {
         }
         return null;
     }
-
 }
