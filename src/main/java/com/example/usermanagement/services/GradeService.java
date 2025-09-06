@@ -1,7 +1,7 @@
 package com.example.usermanagement.services;
 
-import com.example.usermanagement.DTOs.response.GradeDTO;
 import com.example.usermanagement.models.Grade;
+import com.example.usermanagement.models.Subject;
 import com.example.usermanagement.repositories.GradeRepository;
 import com.example.usermanagement.repositories.SubjectRepository;
 import lombok.AllArgsConstructor;
@@ -37,24 +37,26 @@ public class GradeService {
         gradeRepository.deleteById(grade_id);
     }
 
-    public List<GradeDTO> getGradesOfStudent(Integer student_id) {
+    public List<Grade> getGradesOfStudent(Integer student_id) {
         return gradeRepository.findGradesByStudent_Id(student_id);
     }
 
     public Double getAverage(Integer student_id) {
-        Double sum = 0.0, count = 0.0;
-        List<GradeDTO> grades = gradeRepository.findGradesByStudent_Id(student_id);
-        for (GradeDTO grade : grades) {
-            String subjectName = grade.getSubject();
-            Integer subject_id = subjectRepository.getSubjectByName(subjectName).getId();
-            if (subjectRepository.findById(subject_id).isPresent()) {
-                Integer currCredits = subjectRepository.findById(subject_id).get().getCredits();
-                sum += grade.getValue() * currCredits;
-                count += currCredits;
+        double sum = 0.0;
+        int totalCredits = 0;
+        List<Grade> grades = gradeRepository.findGradesByStudent_Id(student_id);
+        for (Grade grade : grades) {
+            Subject subject = grade.getSubject();
+            if (subject != null) {
+                int credits = subject.getCredits();
+                sum += grade.getValue() * credits;
+                totalCredits += credits;
             }
         }
-        Double result = Double.parseDouble(String.format("%.2f", sum / count));
-        return result;
+        if (totalCredits == 0)
+            return 0.0;
+
+        return (double) Math.round((sum / totalCredits) * 100) / 100;
     }
 }
 

@@ -48,7 +48,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void when_student_exists_return_error_message(){
+    public void when_student_exists_return_error_message() {
         Student student = Student.builder()
                 .email("student@example.com")
                 .password(encoder.encode("parola123"))
@@ -80,7 +80,7 @@ public class StudentServiceTest {
                 .isEqualTo("token123")
                 .isNotNull();
 
-        verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test
@@ -98,33 +98,33 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void return_all_students(){
+    public void return_all_students() {
         studentService.getAllStudents();
-        verify(studentRepository,times(1)).findAll();
+        verify(studentRepository, times(1)).findAll();
     }
 
     @Test
-    public void update_student(){
-        studentService.updateStudentById(1,new Student());
-        verify(studentRepository,times(1)).deleteById(1);
-        verify(studentRepository,times(1)).save(any(Student.class));
+    public void update_student() {
+        studentService.updateStudentById(1, new Student());
+        verify(studentRepository, times(1)).deleteById(1);
+        verify(studentRepository, times(1)).save(any(Student.class));
     }
 
     @Test
-    public void delete_student(){
+    public void delete_student() {
         studentService.deleteStudentById(1);
-        verify(studentRepository,times(1)).deleteById(1);
+        verify(studentRepository, times(1)).deleteById(1);
     }
 
     @Test
-    public void get_by_email(){
+    public void get_by_email() {
         String email = "student@example.com";
         studentService.getStudentByEmail(email);
-        verify(studentRepository,times(1)).findStudentByEmail(email);
+        verify(studentRepository, times(1)).findStudentByEmail(email);
     }
 
     @Test
-    public void return_max_absences(){
+    public void return_max_absences() {
         Student student1 = Student.builder()
                 .email("student@example.com")
                 .name("Ion")
@@ -151,7 +151,7 @@ public class StudentServiceTest {
                 .build();
         StringBuilder name = new StringBuilder();
 
-        when(studentRepository.findAll()).thenReturn(Arrays.asList(student1,student2,student3,student4));
+        when(studentRepository.findAll()).thenReturn(Arrays.asList(student1, student2, student3, student4));
         when(studentRepository.findById(2)).thenReturn(Optional.of(student2));
         when(studentRepository.findById(3)).thenReturn(Optional.of(student3));
         when(studentRepository.findById(4)).thenReturn(Optional.of(student4));
@@ -163,7 +163,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void when_less_than_two_students_return_null(){
+    public void when_less_than_two_students_return_null() {
         //first student in the database will always be the
         //admin account which is generated at startup
         //so the id starts at 2

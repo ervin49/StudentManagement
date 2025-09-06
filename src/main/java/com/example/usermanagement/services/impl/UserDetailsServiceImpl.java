@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Student student = studentRepository.findStudentByEmail(username);
         if (student == null)
             throw new UsernameNotFoundException("User with name '" + username + "' not found");
-        else
-            return new UserDetailsImpl(student);
+
+        return new UserDetailsImpl(student);
     }
 }

@@ -22,9 +22,9 @@ public class GradeController {
     private final StudentService studentService;
 
     @GetMapping("/my-grades")
-    public List<GradeDTO> getAllGrades() {
+    public List<Grade> getAllGrades() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null && authentication.isAuthenticated()){
+        if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
             Student student = studentService.getStudentByEmail(email);
             return gradeService.getGradesOfStudent(student.getId());
