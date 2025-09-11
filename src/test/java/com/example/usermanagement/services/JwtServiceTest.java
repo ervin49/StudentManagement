@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.security.Key;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,6 +63,30 @@ public class JwtServiceTest {
         assertThat(studentClaims.get("role")).isEqualTo("USER");
         assertThat(adminClaims.getSubject()).isEqualTo("admin@example.com");
         assertThat(adminClaims.get("role")).isEqualTo("ADMIN");
+    }
+
+    @Test
+    void getSignInKey() {
+        Key key = jwtService.getSignInKey();
+
+        assertThat(key)
+                .isNotNull();
+    }
+
+    @Test
+    void extractClaim() {
+    }
+
+    @Test
+    void extractAllClaims() {
+    }
+
+    @Test
+    void isTokenExpired() {
+    }
+
+    @Test
+    void extractExpirationDate() {
     }
 
 //    @Test

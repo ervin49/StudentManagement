@@ -18,10 +18,6 @@ public class SubjectService {
         subjectRepository.save(subject);
     }
 
-    public void saveAll(List<Subject> subjects) {
-        subjectRepository.saveAll(subjects);
-    }
-
     public List<Subject> getAllSubjects() {
         return subjectRepository.findAll();
     }
