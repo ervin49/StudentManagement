@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -34,11 +36,11 @@ public class StudentController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody StudentRequestDTO studentRequestDTO) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody StudentRequestDTO studentRequestDTO) {
         String str = studentService.login(studentRequestDTO);
-        if(str.equals("Email or password wrong!"))
-            return new ResponseEntity<>(str,HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(str, HttpStatus.OK);
+        if (str.equals("Email or password wrong!"))
+            return new ResponseEntity<>(Map.of("Message", str), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Map.of("Jwt", str), HttpStatus.OK);
     }
 
     @GetMapping("/students")
@@ -48,44 +50,40 @@ public class StudentController {
     }
 
     @GetMapping("/my-details")
-    public Student getMyDetails(){
-         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null && authentication.isAuthenticated()){
+    public Student getMyDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
             return studentService.getStudentByEmail(email);
         }
         return null;
     }
 
-    @GetMapping("/")
-    public String welcome() {
-        return "Welcome!";
-    }
-
     @GetMapping("/students/most-absences")
-    public String getMostAbsencesOfAllStudents() {
-        StringBuilder name = new StringBuilder();
-        Integer absences = studentService.mostAbsences(name);
-        if(absences != null)
-            return "Student " + name + " has most absences: " + absences;
-        return "There is no student in the database!";
+    public Map<String, Object> getMostAbsencesOfAllStudents() {
+        Optional<Student> student = studentService.mostAbsences();
+        if (student.isPresent())
+            return Map.of(
+                    "name", student.get().getName(),
+                    "absences", student.get().getAbsences());
+        return Map.of("message", "There is no student in database");
     }
 
     @PutMapping("/students/update/{student_id}")
     public ResponseEntity<String> updateStudentById(@PathVariable Integer student_id, @RequestBody Student student) {
         try {
             studentService.updateStudentById(student_id, student);
-            return ResponseEntity.status(HttpStatus.OK).body("Update successful");
+            return ResponseEntity.status(HttpStatus.OK).body("Updated successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @DeleteMapping("/students/delete-student/{student_id}")
-    public ResponseEntity<Student> removeStudent(@PathVariable Integer student_id) {
+    public ResponseEntity<String> removeStudent(@PathVariable Integer student_id) {
         try {
             studentService.deleteStudentById(student_id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Removed successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

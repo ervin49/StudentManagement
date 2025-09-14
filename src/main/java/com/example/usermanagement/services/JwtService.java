@@ -6,10 +6,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -48,6 +51,23 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public boolean isJwt(String jwt) {
+        String[] jwtSplitted = jwt.split("\\.");
+        if (jwtSplitted.length != 3)
+            return false;
+        try {
+            String jsonFirstPart = new String(Base64.getDecoder().decode(jwtSplitted[0]));
+            JSONObject firstPart = new JSONObject(jsonFirstPart);
+            if (!firstPart.has("alg"))
+                return false;
+            String jsonSecondPart = new String(Base64.getDecoder().decode(jwtSplitted[1]));
+            JSONObject secondPart = new JSONObject(jsonSecondPart);
+        } catch (JSONException err) {
+            return false;
+        }
+        return true;
     }
 
     public Boolean isTokenExpired(String token) {

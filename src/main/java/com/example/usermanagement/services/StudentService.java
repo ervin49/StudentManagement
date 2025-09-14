@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class StudentService {
             UserDetailsImpl userDetails = UserDetailsImpl.builder().student(student).build();
 
             return jwtService.generateToken(userDetails);
-        }catch (BadCredentialsException e) {
+        } catch (BadCredentialsException e) {
             return "Email or password wrong!";
         }
     }
@@ -64,21 +65,7 @@ public class StudentService {
         return studentRepository.findStudentByEmail(email);
     }
 
-    public Integer mostAbsences(StringBuilder name) {
-        int maxAbsences = 0;
-        if(studentRepository.findAll().size() >= 2) {
-            for (Integer id = 2; id <= studentRepository.findAll().size(); id++) {
-                if (studentRepository.findById(id).isPresent()) {
-                    Integer currAbsences = studentRepository.findById(id).get().getAbsences();
-                    if (maxAbsences < currAbsences) {
-                        maxAbsences = currAbsences;
-                        name.setLength(0);
-                        name.append(studentRepository.findById(id).get().getName());
-                    }
-                }
-            }
-            return maxAbsences;
-        }
-        return null;
+    public Optional<Student> mostAbsences() {
+        return studentRepository.findTopByOrderByAbsencesDesc();
     }
 }

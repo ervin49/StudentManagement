@@ -125,59 +125,7 @@ public class StudentServiceTest {
 
     @Test
     public void return_max_absences() {
-        Student student1 = Student.builder()
-                .email("student@example.com")
-                .name("Ion")
-                .password("parola123")
-                .absences(3)
-                .build();
-        Student student2 = Student.builder()
-                .email("student@example.com")
-                .name("Marcel")
-                .absences(4)
-                .password("parola123")
-                .build();
-        Student student3 = Student.builder()
-                .email("student@example.com")
-                .name("Matei")
-                .absences(10)
-                .password("parola123")
-                .build();
-        Student student4 = Student.builder()
-                .email("student@example.com")
-                .name("Ioana")
-                .absences(2)
-                .password("parola123")
-                .build();
-        StringBuilder name = new StringBuilder();
-
-        when(studentRepository.findAll()).thenReturn(Arrays.asList(student1, student2, student3, student4));
-        when(studentRepository.findById(2)).thenReturn(Optional.of(student2));
-        when(studentRepository.findById(3)).thenReturn(Optional.of(student3));
-        when(studentRepository.findById(4)).thenReturn(Optional.of(student4));
-
-        Integer result = studentService.mostAbsences(name);
-
-        assertThat(result).isEqualTo(10);
-        assertThat(name.toString()).isEqualTo("Matei");
-    }
-
-    @Test
-    public void when_less_than_two_students_return_null() {
-        //first student in the database will always be the
-        //admin account which is generated at startup
-        //so the id starts at 2
-        Student student1 = Student.builder()
-                .email("student@example.com")
-                .name("Ion")
-                .password("parola123")
-                .absences(3)
-                .build();
-        List<Student> students = List.of(student1);
-        when(studentRepository.findAll()).thenReturn(students);
-
-        Integer result = studentService.mostAbsences(new StringBuilder());
-
-        assertThat(result).isNull();
+        studentService.mostAbsences();
+        verify(studentRepository, times(1)).findTopByOrderByAbsencesDesc();
     }
 }
