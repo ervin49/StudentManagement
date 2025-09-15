@@ -34,4 +34,8 @@ public class SubjectService {
     public void deleteSubject(Integer subject_id) {
         subjectRepository.deleteById(subject_id);
     }
+
+    public boolean existsById(Integer subjectId) {
+        return subjectRepository.existsById(subjectId);
+    }
 }

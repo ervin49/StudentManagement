@@ -27,10 +27,10 @@ public class SubjectController {
     }
 
     @PostMapping("/subjects/add")
-    public ResponseEntity<Subject> addSubject(@RequestBody Subject subject) {
+    public ResponseEntity<String> addSubject(@RequestBody Subject subject) {
         try {
             subjectService.addSubject(subject);
-            return ResponseEntity.ok().body(subject);
+            return new ResponseEntity<>("Subject added successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -47,12 +47,11 @@ public class SubjectController {
     }
 
     @DeleteMapping("/subjects/delete-subject/{subject_id}")
-    public ResponseEntity<Subject> deleteSubject(@PathVariable Integer subject_id) {
-        try {
+    public ResponseEntity<String> deleteSubject(@PathVariable Integer subject_id) {
+        if (subjectService.existsById(subject_id)) {
             subjectService.deleteSubject(subject_id);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return new ResponseEntity<>("Subject deleted successfully", HttpStatus.OK);
         }
+        return new ResponseEntity<>("Subject does not exist", HttpStatus.NOT_FOUND);
     }
 }

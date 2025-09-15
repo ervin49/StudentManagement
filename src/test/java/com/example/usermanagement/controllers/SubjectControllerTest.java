@@ -3,10 +3,12 @@ package com.example.usermanagement.controllers;
 import com.example.usermanagement.DTOs.request.StudentRequestDTO;
 import com.example.usermanagement.models.Role;
 import com.example.usermanagement.models.Student;
+import com.example.usermanagement.models.Subject;
 import com.example.usermanagement.repositories.SubjectRepository;
 import com.example.usermanagement.services.StudentService;
 import com.example.usermanagement.services.SubjectService;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +23,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -75,27 +78,111 @@ class SubjectControllerTest {
 
     @Test
     void should_return_all_subjects() {
+        Subject math = Subject.builder()
+                .name("Maths")
+                .build();
+        Subject physics = Subject.builder()
+                .credits(5)
+                .build();
+
+        subjectService.addSubject(math);
+        subjectService.addSubject(physics);
+
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
                 .get("/subjects")
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body("[0].name", equalTo("Maths"),
+                        "[1].credits", equalTo(5));
     }
 
     @Test
     void getSpecificSubject() {
+        Subject math = Subject.builder()
+                .name("Maths")
+                .build();
+        subjectService.addSubject(math);
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .when()
+                .get("/subjects/{subject_id}", 1)
+                .then()
+                .statusCode(200)
+                .body("name", equalTo("Maths"));
     }
 
     @Test
-    void addSubject() {
+    void should_add_subject() {
+        Subject math = Subject.builder()
+                .name("Maths")
+                .build();
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .contentType(ContentType.JSON)
+                .body(math)
+                .when()
+                .post("/subjects/add")
+                .then()
+                .statusCode(201)
+                .body(equalTo("Subject added successfully"));
     }
 
     @Test
     void updateSubject() {
+        Subject math = Subject.builder()
+                .name("Maths")
+                .build();
+
+        Subject chemistry = Subject.builder()
+                .name("Chemistry")
+                .build();
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .contentType(ContentType.JSON)
+                .body(chemistry)
+                .when()
+                .put("/subjects/update-subject/{subject_id}", 1)
+                .then()
+                .statusCode(200)
+                .body(equalTo("Subject updated successfully"));
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/subjects/{subject_id}", 1)
+                .then()
+                .statusCode(200)
+                .body("name", equalTo("Chemistry"));
     }
 
     @Test
     void deleteSubject() {
+        Subject math = Subject.builder()
+                .name("Maths")
+                .build();
+
+        subjectService.addSubject(math);
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .when()
+                .delete("/subjects/delete-subject/{subject_id}", 1)
+                .then()
+                .statusCode(200)
+                .body(equalTo("Subject deleted successfully"));
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .when()
+                .delete("/subjects/delete-subject/{subject_id}", 1)
+                .then()
+                .statusCode(404)
+                .body(equalTo("Subject does not exist"));
     }
 }
