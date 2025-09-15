@@ -1,0 +1,9 @@
+name: post
+services:
+  postgres:
+    environment:
+      - POSTGRES_PASSWORD=parola
+    container_name: post
+    ports:
+      - "5432:5432"
+    image: postgres

@@ -6,6 +6,7 @@ import com.example.usermanagement.services.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,14 +60,14 @@ public class StudentController {
         return null;
     }
 
-    @GetMapping("/students/most-absences")
-    public Map<String, Object> getMostAbsencesOfAllStudents() {
-        Optional<Student> student = studentService.mostAbsences();
-        if (student.isPresent())
-            return Map.of(
-                    "name", student.get().getName(),
-                    "absences", student.get().getAbsences());
-        return Map.of("message", "There is no student in database");
+    @GetMapping(value = "/students/most-absences")
+    public ResponseEntity<Map<String, Object>> getMostAbsencesOfAllStudents() {
+        Student student = studentService.mostAbsences();
+        if (student != null)
+            return new ResponseEntity<>(Map.of(
+                    "name", student.getName(),
+                    "absences", student.getAbsences()), HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("message", "There is no student in database"), HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/students/update/{student_id}")
@@ -81,11 +82,10 @@ public class StudentController {
 
     @DeleteMapping("/students/delete-student/{student_id}")
     public ResponseEntity<String> removeStudent(@PathVariable Integer student_id) {
-        try {
+        if (studentService.existsById(student_id)) {
             studentService.deleteStudentById(student_id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Removed successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseEntity<>("Removed successfully", HttpStatus.OK);
         }
+        return new ResponseEntity<>("Student does not exist", HttpStatus.NOT_FOUND);
     }
 }

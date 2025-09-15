@@ -8,6 +8,7 @@ import com.example.usermanagement.services.JwtService;
 import com.example.usermanagement.services.StudentService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +34,17 @@ class StudentControllerTest {
     private Integer port;
 
     private String jwt;
+
+    StudentRepository studentRepository;
+    StudentService studentService;
+    JwtService jwtService;
+
+    @Autowired
+    public StudentControllerTest(StudentRepository studentRepository, StudentService studentService, JwtService jwtService) {
+        this.studentRepository = studentRepository;
+        this.studentService = studentService;
+        this.jwtService = jwtService;
+    }
 
     @Container
     @ServiceConnection
@@ -49,15 +62,6 @@ class StudentControllerTest {
         postgres.stop();
     }
 
-    @Autowired
-    StudentRepository studentRepository;
-
-    @Autowired
-    StudentService studentService;
-
-    @Autowired
-    JwtService jwtService;
-
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
@@ -65,13 +69,14 @@ class StudentControllerTest {
 
         Student admin = Student.builder()
                 .email("admin@example.com")
+                .name("Admin")
                 .role(Role.ADMIN)
+                .absences(2)
                 .password("parola")
                 .build();
 
         studentService.register(admin);
         jwt = studentService.login(new StudentRequestDTO("admin@example.com", "parola"));
-
     }
 
 
@@ -182,7 +187,7 @@ class StudentControllerTest {
     }
 
     @Test
-    void getMyDetails() {
+    void should_return_student_details() {
         Student student = Student.builder()
                 .name("Dragos")
                 .email("dragos@gmail.com")
@@ -209,7 +214,7 @@ class StudentControllerTest {
     }
 
     @Test
-    void getMostAbsencesOfAllStudents() {
+    void should_return_most_absences_of_all_students() {
         Student student1 = Student.builder()
                 .email("student1@example.com")
                 .password("parola")
@@ -234,18 +239,21 @@ class StudentControllerTest {
         studentService.register(student1);
         studentService.register(student2);
         studentService.register(student3);
+        RestAssured.defaultParser = Parser.JSON;
 
         given()
                 .header("Authorization", "Bearer " + jwt)
+                .contentType(ContentType.JSON)
                 .when()
                 .get("/students/most-absences")
                 .then()
+                .statusCode(200)
                 .body("absences", equalTo(14),
                         "name", equalTo("Andrei"));
     }
 
     @Test
-    void updateStudentById() {
+    void should_update_student() {
         Student oldStudent = Student.builder()
                 .email("old@example.com")
                 .password("parola")
@@ -270,20 +278,29 @@ class StudentControllerTest {
     }
 
     @Test
-    void removeStudent() {
+    void should_remove_student() {
         Student student = Student.builder()
                 .email("student@example.com")
                 .password("parola")
                 .build();
 
         studentService.register(student);
+        System.out.println(student.getId());
 
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
-                .delete("/students/delete-student/{student_id}", 1)
+                .delete("/students/delete-student/{student_id}", 13)
                 .then()
-                .statusCode(204)
+                .statusCode(200)
                 .body(equalTo("Removed successfully"));
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .when()
+                .delete("/students/delete-student/{student_id}", 13)
+                .then()
+                .statusCode(404)
+                .body(equalTo("Student does not exist"));
     }
 }

@@ -15,7 +15,7 @@ public class AdminAccountConfig implements CommandLineRunner {
     private PasswordEncoder encoder;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         Student admin = Student.builder()
                 .email("admin@example.com")
                 .password(encoder.encode("admin"))

@@ -65,7 +65,11 @@ public class StudentService {
         return studentRepository.findStudentByEmail(email);
     }
 
-    public Optional<Student> mostAbsences() {
-        return studentRepository.findTopByOrderByAbsencesDesc();
+    public Student mostAbsences() {
+        return studentRepository.findTopByOrderByAbsencesDesc().orElseThrow();
+    }
+
+    public Boolean existsById(Integer studentId) {
+        return studentRepository.existsById(studentId);
     }
 }
