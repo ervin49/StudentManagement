@@ -10,4 +10,5 @@ Spring Boot application for managing a student database.
 - PostgreSQL
 - Maven
 - Junit & Mockito
+- Testcontainers
 - Docker

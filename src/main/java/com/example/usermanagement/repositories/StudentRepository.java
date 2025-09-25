@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Integer> {
     Student findStudentByEmail(String email);
 
-    Optional<Student> findTopByOrderByAbsencesDesc();
+    Student findTopByOrderByAbsencesDesc();
 }

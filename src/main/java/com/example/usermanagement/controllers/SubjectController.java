@@ -22,8 +22,12 @@ public class SubjectController {
     }
 
     @GetMapping("/subjects/{subject_id}")
-    public Optional<Subject> getSpecificSubject(@PathVariable Integer subject_id) {
-        return subjectService.getSpecificSubject(subject_id);
+    public ResponseEntity<Subject> getSpecificSubject(@PathVariable Integer subject_id) {
+        Optional<Subject> subject = subjectService.getSpecificSubject(subject_id);
+        if (subject.isPresent()) {
+            return new ResponseEntity<>(subjectService.getSpecificSubject(subject_id).get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/subjects/add")
@@ -37,13 +41,12 @@ public class SubjectController {
     }
 
     @PutMapping("/subjects/update-subject/{subject_id}")
-    public ResponseEntity<Subject> updateSubject(@PathVariable Integer subject_id, @RequestBody Subject subject) {
-        try {
+    public ResponseEntity<String> updateSubject(@PathVariable Integer subject_id, @RequestBody Subject subject) {
+        if (subjectService.existsById(subject_id)) {
             subjectService.updateSubject(subject_id, subject);
-            return ResponseEntity.ok().body(subject);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return new ResponseEntity<>("Subject updated successfully", HttpStatus.OK);
         }
+        return new ResponseEntity<>("Subject doesn't exist", HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/subjects/delete-subject/{subject_id}")
@@ -52,6 +55,6 @@ public class SubjectController {
             subjectService.deleteSubject(subject_id);
             return new ResponseEntity<>("Subject deleted successfully", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Subject does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Subject doesn't exist", HttpStatus.NOT_FOUND);
     }
 }

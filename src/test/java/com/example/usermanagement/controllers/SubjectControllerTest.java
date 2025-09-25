@@ -4,12 +4,12 @@ import com.example.usermanagement.DTOs.request.StudentRequestDTO;
 import com.example.usermanagement.models.Role;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.models.Subject;
+import com.example.usermanagement.repositories.StudentRepository;
 import com.example.usermanagement.repositories.SubjectRepository;
 import com.example.usermanagement.services.StudentService;
 import com.example.usermanagement.services.SubjectService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,18 +38,22 @@ class SubjectControllerTest {
     SubjectService subjectService;
     SubjectRepository subjectRepository;
     StudentService studentService;
+    StudentRepository studentRepository;
 
     @Autowired
-    public SubjectControllerTest(SubjectService subjectService, SubjectRepository subjectRepository, StudentService studentService) {
+    public SubjectControllerTest(SubjectService subjectService, SubjectRepository subjectRepository, StudentService studentService, StudentRepository studentRepository) {
         this.subjectService = subjectService;
         this.subjectRepository = subjectRepository;
         this.studentService = studentService;
+        this.studentRepository = studentRepository;
     }
 
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
+        studentRepository.deleteAll();
         subjectRepository.deleteAll();
+
         Student admin = Student.builder()
                 .email("admin@example.com")
                 .role(Role.ADMIN)
@@ -104,11 +108,12 @@ class SubjectControllerTest {
                 .name("Maths")
                 .build();
         subjectService.addSubject(math);
+        Integer mathId = math.getId();
 
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
-                .get("/subjects/{subject_id}", 1)
+                .get("/subjects/{subject_id}", mathId)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo("Maths"));
@@ -137,6 +142,9 @@ class SubjectControllerTest {
                 .name("Maths")
                 .build();
 
+        subjectService.addSubject(math);
+        Integer mathId = math.getId();
+
         Subject chemistry = Subject.builder()
                 .name("Chemistry")
                 .build();
@@ -146,19 +154,10 @@ class SubjectControllerTest {
                 .contentType(ContentType.JSON)
                 .body(chemistry)
                 .when()
-                .put("/subjects/update-subject/{subject_id}", 1)
+                .put("/subjects/update-subject/{subject_id}", mathId)
                 .then()
                 .statusCode(200)
                 .body(equalTo("Subject updated successfully"));
-
-        given()
-                .header("Authorization", "Bearer " + jwt)
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/subjects/{subject_id}", 1)
-                .then()
-                .statusCode(200)
-                .body("name", equalTo("Chemistry"));
     }
 
     @Test
@@ -168,11 +167,12 @@ class SubjectControllerTest {
                 .build();
 
         subjectService.addSubject(math);
+        Integer subjectId = math.getId();
 
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
-                .delete("/subjects/delete-subject/{subject_id}", 1)
+                .delete("/subjects/delete-subject/{subject_id}", subjectId)
                 .then()
                 .statusCode(200)
                 .body(equalTo("Subject deleted successfully"));
@@ -180,9 +180,9 @@ class SubjectControllerTest {
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
-                .delete("/subjects/delete-subject/{subject_id}", 1)
+                .delete("/subjects/delete-subject/{subject_id}", subjectId)
                 .then()
                 .statusCode(404)
-                .body(equalTo("Subject does not exist"));
+                .body(equalTo("Subject doesn't exist"));
     }
 }

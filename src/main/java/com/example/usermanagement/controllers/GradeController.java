@@ -1,6 +1,5 @@
 package com.example.usermanagement.controllers;
 
-import com.example.usermanagement.DTOs.response.GradeDTO;
 import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.services.GradeService;

@@ -66,7 +66,7 @@ public class StudentService {
     }
 
     public Student mostAbsences() {
-        return studentRepository.findTopByOrderByAbsencesDesc().orElseThrow();
+        return studentRepository.findTopByOrderByAbsencesDesc();
     }
 
     public Boolean existsById(Integer studentId) {

@@ -20,7 +20,6 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,22 +45,6 @@ class StudentControllerTest {
         this.jwtService = jwtService;
     }
 
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:latest"
-    );
-
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
-
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
@@ -77,6 +60,23 @@ class StudentControllerTest {
 
         studentService.register(admin);
         jwt = studentService.login(new StudentRequestDTO("admin@example.com", "parola"));
+    }
+
+
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+            "postgres:latest"
+    );
+
+    @BeforeAll
+    static void beforeAll() {
+        postgres.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        postgres.stop();
     }
 
 
@@ -285,12 +285,12 @@ class StudentControllerTest {
                 .build();
 
         studentService.register(student);
-        System.out.println(student.getId());
+        Integer studentId = student.getId();
 
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
-                .delete("/students/delete-student/{student_id}", 13)
+                .delete("/students/delete-student/{student_id}", studentId)
                 .then()
                 .statusCode(200)
                 .body(equalTo("Removed successfully"));
@@ -298,7 +298,7 @@ class StudentControllerTest {
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
-                .delete("/students/delete-student/{student_id}", 13)
+                .delete("/students/delete-student/{student_id}", studentId)
                 .then()
                 .statusCode(404)
                 .body(equalTo("Student does not exist"));
