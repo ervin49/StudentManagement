@@ -32,34 +32,36 @@ public class GradeController {
     }
 
     @GetMapping("/grades/{grade_id}")
-    public Optional<Grade> getGrade(@PathVariable Integer grade_id) {
-        return gradeService.getSpecificGrade(grade_id);
+    public ResponseEntity<Grade> getGrade(@PathVariable Integer grade_id) {
+        Optional<Grade> grade = gradeService.getSpecificGrade(grade_id);
+        if (grade.isPresent())
+            return new ResponseEntity<>(gradeService.getSpecificGrade(grade_id).get(), HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
 
     @PostMapping("/grades/add")
     public ResponseEntity<String> addGrade(@RequestBody Grade grade) {
         gradeService.addGrade(grade);
-        return ResponseEntity.ok().body("Grade added");
+        return new ResponseEntity<>("Grade added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/grades/update-grade/{grade_id}")
     public ResponseEntity<String> updateGrade(@PathVariable Integer grade_id, @RequestBody Grade grade) {
         gradeService.updateGrade(grade_id, grade);
-        return ResponseEntity.ok().body("Grade updated");
+        return new ResponseEntity<>("Grade updated successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/grades/delete-grade/{grade_id}")
-    public ResponseEntity<Grade> deleteGrade(@PathVariable Integer grade_id) {
-        try {
+    public ResponseEntity<String> deleteGrade(@PathVariable Integer grade_id) {
+        if (gradeService.getSpecificGrade(grade_id).isPresent()) {
             gradeService.deleteGrade(grade_id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseEntity<>("Grade deleted successfully", HttpStatus.OK);
         }
+        return new ResponseEntity<>("Grade doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/average-of-student/{student_id}")
+    @GetMapping("/grades/average/{student_id}")
     public ResponseEntity<String> getAverageOfStudent(@PathVariable Integer student_id) {
         return ResponseEntity.ok("Student's average is: " + gradeService.getAverage(student_id));
     }

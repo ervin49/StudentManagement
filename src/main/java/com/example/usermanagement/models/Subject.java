@@ -18,7 +18,8 @@ public class Subject {
     @SequenceGenerator(name = "genSubject", initialValue = 100)
     private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
+    @Column(nullable = false)
     private Integer credits;
 }
