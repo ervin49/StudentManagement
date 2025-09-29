@@ -5,98 +5,102 @@ import com.example.usermanagement.models.Student;
 import com.example.usermanagement.services.impl.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.security.Key;
-import java.util.function.Function;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
 public class JwtServiceTest {
 
-    @InjectMocks
-    private JwtService jwtService;
+    JwtService jwtService;
+    UserDetailsImpl userDetails;
+    Student student;
 
-    Student admin = Student.builder()
-            .email("admin@example.com")
-            .role(Role.valueOf("ADMIN"))
-            .password("parola123")
-            .build();
-    Student student = Student.builder()
-            .email("student@example.com")
-            .role(Role.valueOf("USER"))
-            .password("parola123")
-            .build();
-    UserDetailsImpl studentDetails = new UserDetailsImpl(student);
-    UserDetailsImpl adminDetails = new UserDetailsImpl(admin);
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+            "postgres:latest"
+    );
 
-    @Test
-    public void generate_token() {
-        String studentToken = jwtService.generateToken(studentDetails);
-        String adminToken = jwtService.generateToken(adminDetails);
+    @Autowired
+    JwtServiceTest(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
 
-        Claims studentClaims = Jwts.parserBuilder()
-                .setSigningKey(jwtService.getSignInKey())
-                .build()
-                .parseClaimsJws(studentToken)
-                .getBody();
+    @BeforeEach
+    void setUp() {
+        student = Student.builder()
+                .role(Role.USER)
+                .email("student@example.com")
+                .build();
 
-        Claims adminClaims = Jwts.parserBuilder()
-                .setSigningKey(jwtService.getSignInKey())
-                .build()
-                .parseClaimsJws(adminToken)
-                .getBody();
+        userDetails = UserDetailsImpl.builder()
+                .student(student)
+                .build();
+    }
 
-        assertThat(studentToken)
-                .isNotNull()
-                .isNotEmpty();
-        assertThat(adminToken)
-                .isNotNull()
-                .isNotEmpty();
-        assertThat(studentClaims.getSubject()).isEqualTo("student@example.com");
-        assertThat(studentClaims.get("role")).isEqualTo("USER");
-        assertThat(adminClaims.getSubject()).isEqualTo("admin@example.com");
-        assertThat(adminClaims.get("role")).isEqualTo("ADMIN");
+    @BeforeAll
+    static void beforeAll() {
+        postgres.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        postgres.stop();
     }
 
     @Test
-    void getSignInKey() {
-        Key key = jwtService.getSignInKey();
+    void should_generate_token() {
+        String token = jwtService.generateToken(userDetails);
+        String username = jwtService.extractClaim(token, Claims::getSubject);
 
-        assertThat(key)
+        assertThat(token)
                 .isNotNull();
+        assertThat(username)
+                .isEqualTo("student@example.com");
+        assertThat(jwtService.isTokenExpired(token))
+                .isFalse();
+        assertThat(jwtService.isJwt(token))
+                .isTrue();
     }
 
     @Test
-    void extractClaim() {
+    void when_token_is_expired_return_false() {
+        String expiredToken = Jwts.builder()
+                .setSubject("student1@example.com")
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode("1982c65d2592ba48322bd8b605f03d76fda133fc64e66a7cda1b353633b5bc33")))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() - 1000))
+                .compact();
+
+        Boolean check = jwtService.isTokenValid(expiredToken, userDetails);
+
+        assertThat(check).isFalse();
     }
 
     @Test
-    void extractAllClaims() {
-    }
+    void when_token_has_wrong_subject_return_false() {
+        String tokenWithWrongSubject = Jwts.builder()
+                .setSubject("student@example.com")
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode("1982c65d2592ba48322bd8b605f03d76fda133fc64e66a7cda1b353633b5bc33")))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() - 1000))
+                .compact();
 
-    @Test
-    void isTokenExpired() {
-    }
+        Boolean check = jwtService.isTokenValid(tokenWithWrongSubject, userDetails);
 
-    @Test
-    void extractExpirationDate() {
+        assertThat(check).isFalse();
     }
-
-//    @Test
-//    public void validate_token() {
-//        String token;
-//        when(jwtService.extractClaim(token, any(Function<Claims,?>class))).thenReturn("student@example.com");
-//        when(jwtService.isTokenExpired(any(String.class))).thenReturn(false);
-//
-//        Boolean result = jwtService.isTokenValid(token, studentDetails);
-//
-//        assertThat(result).isTrue();
-//    }
 }

@@ -24,7 +24,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -83,9 +82,11 @@ class SubjectControllerTest {
     @Test
     void should_return_all_subjects() {
         Subject math = Subject.builder()
+                .credits(5)
                 .name("Maths")
                 .build();
         Subject physics = Subject.builder()
+                .name("Physics")
                 .credits(5)
                 .build();
 
@@ -105,6 +106,7 @@ class SubjectControllerTest {
     @Test
     void getSpecificSubject() {
         Subject math = Subject.builder()
+                .credits(5)
                 .name("Maths")
                 .build();
         subjectService.addSubject(math);
@@ -122,6 +124,7 @@ class SubjectControllerTest {
     @Test
     void should_add_subject() {
         Subject math = Subject.builder()
+                .credits(5)
                 .name("Maths")
                 .build();
 
@@ -139,6 +142,7 @@ class SubjectControllerTest {
     @Test
     void updateSubject() {
         Subject math = Subject.builder()
+                .credits(5)
                 .name("Maths")
                 .build();
 
@@ -146,6 +150,7 @@ class SubjectControllerTest {
         Integer mathId = math.getId();
 
         Subject chemistry = Subject.builder()
+                .credits(5)
                 .name("Chemistry")
                 .build();
 
@@ -163,6 +168,7 @@ class SubjectControllerTest {
     @Test
     void deleteSubject() {
         Subject math = Subject.builder()
+                .credits(5)
                 .name("Maths")
                 .build();
 

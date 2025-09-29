@@ -30,8 +30,12 @@ public class JwtService {
     }
 
     public Boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractClaim(token, Claims::getSubject);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            String username = extractClaim(token, Claims::getSubject);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public Key getSignInKey() {

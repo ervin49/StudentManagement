@@ -21,14 +21,14 @@ public class GradeController {
     private final StudentService studentService;
 
     @GetMapping("/my-grades")
-    public List<Grade> getAllGrades() {
+    public ResponseEntity<List<Grade>> getAllGrades() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
             Student student = studentService.getStudentByEmail(email);
-            return gradeService.getGradesOfStudent(student.getId());
+            return ResponseEntity.ok(gradeService.getGradesOfStudent(student.getId()));
         }
-        return List.of();
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @GetMapping("/grades/{grade_id}")
@@ -36,7 +36,7 @@ public class GradeController {
         Optional<Grade> grade = gradeService.getSpecificGrade(grade_id);
         if (grade.isPresent())
             return new ResponseEntity<>(gradeService.getSpecificGrade(grade_id).get(), HttpStatus.OK);
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 

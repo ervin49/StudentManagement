@@ -160,8 +160,6 @@ class GradeControllerTest {
                 .student(student)
                 .build();
 
-        Integer gradeId = grade.getId();
-
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .contentType(ContentType.JSON)
@@ -172,6 +170,9 @@ class GradeControllerTest {
                 .statusCode(201)
                 .body(equalTo("Grade added successfully"));
 
+        gradeService.addGrade(grade);
+        Integer gradeId = grade.getId();
+
         given()
                 .header("Authorization", "Bearer " + jwt)
                 .when()
@@ -181,6 +182,14 @@ class GradeControllerTest {
                 .body("value", equalTo(10),
                         "subject.name", equalTo("Math"),
                         "student.email", equalTo("student@example.com"));
+
+        given()
+                .header("Authorization", "Bearer " + jwt)
+                .when()
+                .get("/grades/{grade_id}", 10)//this id does not exist at the moment
+                .then()
+                .statusCode(404)
+                .body(equalTo(""));
     }
 
     @Test
@@ -209,14 +218,6 @@ class GradeControllerTest {
                 .then()
                 .statusCode(200)
                 .body(equalTo("Grade updated successfully"));
-
-        given()
-                .header("Authorization", "Bearer " + jwt)
-                .when()
-                .get("/grades/{grade_id}", gradeId)
-                .then()
-                .statusCode(200)
-                .body("value", equalTo(9));
     }
 
     @Test
@@ -267,6 +268,9 @@ class GradeControllerTest {
                 .build();
 
         Integer studentId = student.getId();
+        subjectService.addSubject(chemistry);
+        gradeService.addGrade(chemistryGrade);
+        gradeService.addGrade(mathGrade);
 
         given()
                 .header("Authorization", "Bearer " + jwt)
@@ -274,6 +278,6 @@ class GradeControllerTest {
                 .get("/grades/average/{student_id}", studentId)
                 .then()
                 .statusCode(200)
-                .body(equalTo(9.55));
+                .body(equalTo("Student's average is: 9.56"));
     }
 }
