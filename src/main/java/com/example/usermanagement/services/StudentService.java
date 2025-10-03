@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -39,8 +38,11 @@ public class StudentService {
                     studentRequestDTO.getEmail(), studentRequestDTO.getPassword()
             ));
 
-            Student student = studentRepository.findStudentByEmail(studentRequestDTO.getEmail());
-            UserDetailsImpl userDetails = UserDetailsImpl.builder().student(student).build();
+            String email = studentRequestDTO.getEmail();
+            Student student = studentRepository.findStudentByEmail(email);
+            UserDetailsImpl userDetails = UserDetailsImpl.builder()
+                    .student(student)
+                    .build();
 
             return jwtService.generateToken(userDetails);
         } catch (BadCredentialsException e) {

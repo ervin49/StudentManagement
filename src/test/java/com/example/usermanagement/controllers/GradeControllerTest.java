@@ -38,7 +38,6 @@ class GradeControllerTest {
     private Student student;
     private Subject math;
 
-    @Autowired
     GradeService gradeService;
     GradeRepository gradeRepository;
     StudentService studentService;

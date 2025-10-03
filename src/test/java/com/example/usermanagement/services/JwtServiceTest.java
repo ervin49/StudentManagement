@@ -25,7 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 public class JwtServiceTest {
 
+    @Autowired
     JwtService jwtService;
+
     UserDetailsImpl userDetails;
     Student student;
 
@@ -33,11 +35,6 @@ public class JwtServiceTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:latest"
     );
-
-    @Autowired
-    JwtServiceTest(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
 
     @BeforeEach
     void setUp() {

@@ -3,7 +3,6 @@ package com.example.usermanagement.services;
 import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.models.Subject;
 import com.example.usermanagement.repositories.GradeRepository;
-import com.example.usermanagement.repositories.SubjectRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GradeService {
     GradeRepository gradeRepository;
-    SubjectRepository subjectRepository;
 
     public void addGrade(Grade grade) {
         gradeRepository.save(grade);
@@ -47,11 +45,9 @@ public class GradeService {
         List<Grade> grades = gradeRepository.findGradesByStudent_Id(student_id);
         for (Grade grade : grades) {
             Subject subject = grade.getSubject();
-            if (subject != null) {
-                int credits = subject.getCredits();
-                sum += grade.getValue() * credits;
-                totalCredits += credits;
-            }
+            int credits = subject.getCredits();
+            sum += grade.getValue() * credits;
+            totalCredits += credits;
         }
         if (totalCredits == 0)
             return 0.0;
