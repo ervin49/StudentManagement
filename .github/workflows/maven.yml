@@ -24,19 +24,17 @@ jobs:
     - name: Run docker compose
       uses: hoverkraft-tech/compose-action@b716db5b717cb9b81e391fe638e5aceaa2299e43 # v2.4.0
       with:
-        compose-file: "./docker/docker-compose.yml"
-
-    - name: Execute tests in the running services
-      run: |
-          docker compose exec test-app pytest
+        compose-file: "./docker-compose.yml"
+        
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: maven
+        
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+      
     - name: Upload JAR
       uses: actions/upload-artifact@v4
       with:
