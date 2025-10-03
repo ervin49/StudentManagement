@@ -17,6 +17,7 @@
     <licenses>
         <license/>
     </licenses>
+    <packaging>jar</packaging>
     <developers>
         <developer/>
     </developers>
@@ -172,6 +173,7 @@
     </dependencies>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
