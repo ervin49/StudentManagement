@@ -4,7 +4,6 @@ import com.example.usermanagement.models.Grade;
 import com.example.usermanagement.models.Student;
 import com.example.usermanagement.models.Subject;
 import com.example.usermanagement.repositories.GradeRepository;
-import com.example.usermanagement.repositories.SubjectRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -26,8 +24,6 @@ public class GradeServiceTest {
     @Mock
     private GradeRepository gradeRepository;
 
-    @Mock
-    private SubjectRepository subjectRepository;
 
     Subject math = Subject.builder()
             .id(100)
