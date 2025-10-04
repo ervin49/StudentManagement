@@ -2,7 +2,7 @@ name: post
 services:
   postgres:
     environment:
-      - POSTGRES_PASSWORD=parola
+      - POSTGRES_PASSWORD=parolaparola
     container_name: post
     ports:
       - "5432:5432"
